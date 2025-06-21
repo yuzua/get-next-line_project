@@ -1,0 +1,104 @@
+# GET_NEXT_LINE テスト用 Makefile
+
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -g
+BUFFER_SIZES = 1 10 42 1000 10000
+
+# 通常版のファイル
+REGULAR_SRCS = get_next_line.c get_next_line_utils.c
+REGULAR_HDRS = get_next_line.h
+
+# ボーナス版のファイル
+BONUS_SRCS = get_next_line_bonus.c get_next_line_utils_bonus.c
+BONUS_HDRS = get_next_line_bonus.h
+
+# 実行ファイル名
+REGULAR_EXEC = test_regular
+BONUS_EXEC = test_bonus
+
+.PHONY: all regular bonus clean test test-regular test-bonus test-all help
+
+# デフォルトターゲット
+all: help
+
+# 通常版のコンパイル
+regular:
+	@echo "Compiling regular version..."
+	$(CC) $(CFLAGS) -D BUFFER_SIZE=42 main.c $(REGULAR_SRCS) -o $(REGULAR_EXEC)
+	@echo "Regular version compiled: ./$(REGULAR_EXEC)"
+
+# ボーナス版のコンパイル
+bonus:
+	@echo "Compiling bonus version..."
+	$(CC) $(CFLAGS) -D BUFFER_SIZE=42 -D TEST_BONUS main.c $(BONUS_SRCS) -o $(BONUS_EXEC)
+	@echo "Bonus version compiled: ./$(BONUS_EXEC)"
+
+# 通常版テスト実行
+test-regular: regular
+	@echo "\n========== RUNNING REGULAR VERSION TEST =========="
+	./$(REGULAR_EXEC)
+
+# ボーナス版テスト実行
+test-bonus: bonus
+	@echo "\n========== RUNNING BONUS VERSION TEST =========="
+	./$(BONUS_EXEC)
+
+# 両方のテスト実行
+test-all: test-regular test-bonus
+
+# 異なるBUFFER_SIZEでのテスト
+test-buffer-sizes:
+	@echo "\n========== TESTING DIFFERENT BUFFER SIZES =========="
+	@for size in $(BUFFER_SIZES); do \
+		echo "\n--- Testing with BUFFER_SIZE=$$size ---"; \
+		$(CC) $(CFLAGS) -D BUFFER_SIZE=$$size main.c $(REGULAR_SRCS) -o test_buf_$$size; \
+		./test_buf_$$size; \
+		rm -f test_buf_$$size; \
+	done
+
+# メモリリークチェック (valgrindが必要)
+test-leaks: regular
+	@echo "\n========== MEMORY LEAK CHECK =========="
+	@if command -v valgrind >/dev/null 2>&1; then \
+		valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(REGULAR_EXEC); \
+	else \
+		echo "valgrind not found. Install valgrind for memory leak checking."; \
+	fi
+
+# コンパイラ警告チェック
+test-warnings:
+	@echo "\n========== COMPILER WARNINGS CHECK =========="
+	$(CC) $(CFLAGS) -Wpedantic -Wextra -Wall -Wconversion -Wsign-conversion -D BUFFER_SIZE=42 main.c $(REGULAR_SRCS) -o $(REGULAR_EXEC)_warn
+	@echo "No warnings found!"
+	@rm -f $(REGULAR_EXEC)_warn
+
+# クリーンアップ
+clean:
+	@echo "Cleaning up..."
+	rm -f $(REGULAR_EXEC) $(BONUS_EXEC)
+	rm -f test_buf_*
+	rm -f *.txt
+	@echo "Clean completed."
+
+# ヘルプ表示
+help:
+	@echo "GET_NEXT_LINE Test Makefile"
+	@echo "=========================="
+	@echo ""
+	@echo "Available targets:"
+	@echo "  regular           - Compile regular version"
+	@echo "  bonus             - Compile bonus version"
+	@echo "  test-regular      - Compile and run regular version test"
+	@echo "  test-bonus        - Compile and run bonus version test"
+	@echo "  test-all          - Run both regular and bonus tests"
+	@echo "  test-buffer-sizes - Test with different BUFFER_SIZE values"
+	@echo "  test-leaks        - Run memory leak check (requires valgrind)"
+	@echo "  test-warnings     - Check for compiler warnings"
+	@echo "  clean             - Remove compiled files and test files"
+	@echo "  help              - Show this help message"
+	@echo ""
+	@echo "Examples:"
+	@echo "  make test-regular     # Test regular version"
+	@echo "  make test-bonus       # Test bonus version"
+	@echo "  make test-all         # Test both versions"
+	@echo "  make clean            # Clean up files" 

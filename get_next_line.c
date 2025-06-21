@@ -33,12 +33,9 @@ char	*get_next_line(int fd)
 	int						read_result;
 	size_t					buffer_size;
 
-	if (fd < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (1 <= BUFFER_SIZE && BUFFER_SIZE <= 2147483647)
-		buffer_size = BUFFER_SIZE;
-	else
-		buffer_size = 1;
+	buffer_size = BUFFER_SIZE;
 	if (buffer == NULL)
 	{
 		buffer = init_file_manager_buffer();
