@@ -18,15 +18,13 @@ char	*get_next_line(int fd)
 	static t_file_manager	*buffer_list;
 	t_file_manager			*buffer;
 	int						read_result;
-	size_t					buffer_size;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buffer_size = BUFFER_SIZE;
 	buffer = find_or_create_buffer(&buffer_list, fd);
 	if (buffer == NULL)
 		return (NULL);
-	read_result = read_file(fd, buffer, buffer_size);
+	read_result = read_file(fd, buffer);
 	if (read_result == -1)
 	{
 		remove_buffer_list(&buffer_list, fd);

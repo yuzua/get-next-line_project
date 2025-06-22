@@ -39,7 +39,7 @@ typedef struct s_file_manager
 char			*get_next_line(int fd);
 
 t_file_manager	*init_file_manager_buffer(void);
-int				read_file(int fd, t_file_manager *buffer, size_t buffer_size);
+int				read_file(int fd, t_file_manager *buffer);
 char			*read_str_calloc(size_t str_len);
 int				expand_buffer(t_file_manager *buffer, size_t additional_size);
 bool			exit_line_break(char *str, size_t str_length);

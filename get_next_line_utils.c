@@ -41,7 +41,7 @@ int	expand_buffer(t_file_manager *buffer, size_t additional_size)
 	return (1);
 }
 
-int	read_file(int fd, t_file_manager *buffer, size_t buffer_size)
+int	read_file(int fd, t_file_manager *buffer)
 {
 	char	*tmp;
 	int		result;
@@ -49,10 +49,10 @@ int	read_file(int fd, t_file_manager *buffer, size_t buffer_size)
 
 	while (true)
 	{
-		tmp = read_str_calloc(buffer_size);
+		tmp = read_str_calloc(BUFFER_SIZE);
 		if (tmp == NULL)
 			return (-1);
-		result = read(fd, tmp, buffer_size);
+		result = read(fd, tmp, BUFFER_SIZE);
 		if (result == READ_ERROR || expand_buffer(buffer, result) == -1)
 			return (free(tmp), -1);
 		if (result == FILE_TERMINATION)

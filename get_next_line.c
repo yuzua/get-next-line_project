@@ -31,18 +31,16 @@ char	*get_next_line(int fd)
 	char					*line;
 	static t_file_manager	*buffer;
 	int						read_result;
-	size_t					buffer_size;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buffer_size = BUFFER_SIZE;
 	if (buffer == NULL)
 	{
 		buffer = init_file_manager_buffer();
 		if (buffer == NULL)
 			return (NULL);
 	}
-	read_result = read_file(fd, buffer, buffer_size);
+	read_result = read_file(fd, buffer);
 	if (read_result == -1)
 		return (free(buffer->str), free(buffer), buffer = NULL, NULL);
 	line = read_line(buffer);

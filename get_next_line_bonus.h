@@ -44,7 +44,7 @@ t_file_manager	*init_file_manager_buffer(int fd);
 t_file_manager	*find_or_create_buffer(t_file_manager **buffer_list, int fd);
 void			remove_buffer_list(t_file_manager **buffer_list, int fd);
 int				expand_buffer(t_file_manager *buffer, size_t additional_size);
-int				read_file(int fd, t_file_manager *buffer, size_t buffer_size);
+int				read_file(int fd, t_file_manager *buffer);
 char			*read_str_calloc(size_t str_len);
 bool			exit_line_break(char *str, size_t str_length);
 char			*read_line(t_file_manager *buffer);
