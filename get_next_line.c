@@ -34,43 +34,60 @@ t_file_manager	*init_file_manager_buffer(void)
 	return (buffer);
 }
 
+int	expand_buffer(t_file_manager *buffer, size_t additional_size)
+{
+	char	*str;
+	size_t	capacity;
+	size_t	i;
+
+	if (buffer->str_len + additional_size <= buffer->str_capacity)
+		return (1);
+	capacity = 16;
+	buffer->str_capacity != 0 && (capacity = buffer->str_capacity, 0);
+	while (capacity < buffer->str_len + additional_size)
+		capacity *= 2;
+	str = (char *)malloc(sizeof(char) * (capacity + 1));
+	if (str == NULL)
+		return (-1);
+	i = 0;
+	if (buffer->str != NULL && buffer->str_len > 0)
+	{
+		while (i < buffer->str_len)
+		{
+			str[i] = buffer->str[i];
+			i++;
+		}
+		free(buffer->str);
+	}
+	buffer->str_capacity = (buffer->str = str, capacity);
+	return (1);
+}
+
 char	*get_next_line(int fd)
 {
 	char					*line;
 	static t_file_manager	*buffer;
 	int						read_result;
+	size_t					i;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	
-	// ①bufferの初期化
+	buffer == NULL && (buffer = init_file_manager_buffer(), 0);
 	if (buffer == NULL)
-	{
-		buffer = init_file_manager_buffer();
-		if (buffer == NULL)
-			return (NULL);
-	}
-	
-	// ②buffer->not_read_strに改行が含まれている場合の処理
-	line = extract_line_from_not_read(buffer);
+		return (NULL);
+	i = 0;
+	line = extract_line_from_not_read(buffer, i);
 	if (line != NULL)
 		return (line);
-	// ③ファイルから改行が含まれるまでbuffer->strへ値の読み取り
-	read_result = read_file(fd, buffer);
+	i = 0;
+	read_result = read_file(fd, buffer, i);
 	if (read_result == -1)
 		return (free(buffer->str), free(buffer), buffer = NULL, NULL);
-	
-	// ④buffer->not_read_strとbuffer->strを結合し改行まで値を読み取り
-	line = combine_and_extract_line(buffer);
-	free(buffer->str);
-	buffer->str = NULL;
-	buffer->str_len = 0;
-	buffer->str_capacity = 0;
+	i = 0;
+	line = combine_and_extract_line(buffer, i);
+	buffer->str = (free(buffer->str), NULL);
+	buffer->str_capacity = (buffer->str_len = 0, 0);
 	buffer->read_index = 0;
-	if (line == NULL)
-	{
-		free(buffer);
-		buffer = NULL;
-	}
+	line == NULL && (free(buffer), buffer = NULL, 0);
 	return (line);
 }

@@ -39,14 +39,14 @@ typedef struct s_file_manager
 }	t_file_manager;
 
 char			*get_next_line(int fd);
-char			*extract_line_from_not_read(t_file_manager *buffer);
-char			*combine_and_extract_line(t_file_manager *buffer);
-
 t_file_manager	*init_file_manager_buffer(void);
-int				read_file(int fd, t_file_manager *buffer);
-char			*read_str_calloc(size_t str_len);
 int				expand_buffer(t_file_manager *buffer, size_t additional_size);
+
+char			*extract_line_from_not_read(t_file_manager *buffer, size_t i);
+char			*combine_and_extract_line(t_file_manager *buffer, size_t i);
+int				read_file(int fd, t_file_manager *buffer, size_t i);
+void			update_remaining_data(t_file_manager *buffer,
+					size_t str_line_len);
 bool			exit_line_break(char *str, size_t str_length);
-char			*read_line(t_file_manager *buffer);
 
 #endif
